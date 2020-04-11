@@ -1,0 +1,17 @@
+.tocWrapper {
+  border-right: 1px solid rgba(39, 40, 44, 0.20);
+}
+
+.toc {
+  display: flex;
+  width: 280px;
+  color: #27282c;
+}
+
+.tocList {
+  height: 100%;
+  width: 100%;
+  padding: 24px 0;
+  animation: fadein 0.2s;
+  list-style: none;
+}

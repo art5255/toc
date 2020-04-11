@@ -1,0 +1,36 @@
+.tocItem {
+  display: flex;
+  padding: 8px 32px;
+  width: 216px;
+  color: rgba(39, 40, 44, 0.70);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Droid Sans', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 12px;
+  font-weight: normal;
+  line-height: 16px;
+  overflow: hidden;
+  text-decoration: none;
+  text-overflow: ellipsis;
+}
+
+.tocItemSelected {
+  font-weight: bold;
+}
+
+.tocExpander {
+  width: 14px;
+  height: 14px;
+  margin-left: -18px;
+  vertical-align: middle;
+  transition: transform .2s;
+  fill: #3C3D40;
+  cursor: pointer;
+}
+
+.tocExpanderOpened {
+  transform: rotate(90deg);
+  font-weight: bold;
+}
+
+.tocExpanderSelected {
+  font-weight: bold;
+}
