@@ -1,24 +1,17 @@
 import styles from "./toc.module.scss";
-import React, {FunctionComponent, useCallback} from "react";
+import React, {FunctionComponent, SyntheticEvent, useCallback, useEffect, useState} from "react";
 import TableOfContentsEntities from "@interfaces/TableOfContentsEntities";
-import TableOfContentsItem from "@components/toc/item/TableOfContentsItem";
 import TableOfContentsPlaceholder from "@components/toc/placeholder/TableOfContentsPlaceholder";
+import TableOfContentsPageItem from "@components/toc/item/page/TableOfContentsPageItem";
+import TableOfContentsPage from "@interfaces/TableOfContentsPage";
+import getByIds from "@helpers/getByIds";
 
 export interface TableOfContentsProps {
     isLoading: boolean;
     entities: TableOfContentsEntities;
     topLevelIds: string[];
     activeId?: string;
-}
-
-export function getByIds(ids: string[], collection: object) {
-    let items = [];
-
-    for (let id of ids) {
-        items.push(collection[id]);
-    }
-
-    return items;
+    onPageSelect: (event: SyntheticEvent, page: TableOfContentsPage) => void;
 }
 
 const PLACEHOLDER_ITEMS_LENGTH = 12;
@@ -31,7 +24,11 @@ const TableOfContents: FunctionComponent<TableOfContentsProps> = ({
         anchors = {},
     } = {},
     topLevelIds = [],
+    onPageSelect,
 }) => {
+    const [selectedId, setSelectedId] = useState<string>();
+    const [pagesToExpand, setPagesToExpand] = useState<string[]>([]);
+
     let items = [];
 
     if (!isLoading) {
@@ -39,6 +36,25 @@ const TableOfContents: FunctionComponent<TableOfContentsProps> = ({
     } else {
         items = [...Array(PLACEHOLDER_ITEMS_LENGTH)];
     }
+
+    useEffect(() => {
+        if (Object.keys(pages).length > 0 && activeId && pages[activeId]) {
+            let parentId = pages[activeId].parentId;
+            const newPagesToExpand = [pages[activeId].id];
+
+            while (parentId) {
+                if (pages[parentId]) {
+                    newPagesToExpand.push(pages[parentId].id);
+                    parentId = pages[parentId].parentId;
+                } else {
+                    break;
+                }
+            }
+
+            setSelectedId(activeId);
+            setPagesToExpand(newPagesToExpand);
+        }
+    }, [activeId, pages]);
 
     const getChildrenPages = useCallback((ids: string[]) => getByIds(ids, pages), [pages]);
     const getChildrenAnchors = useCallback((ids: string[]) => getByIds(ids, anchors), [anchors]);
@@ -52,13 +68,19 @@ const TableOfContents: FunctionComponent<TableOfContentsProps> = ({
                             key={index}
                         />
                     ))}
-                    {!isLoading && items.map((item) => (
-                        <TableOfContentsItem
-                            key={item.id}
-                            item={item}
-                            activeId={activeId}
+                    {!isLoading && items.map((page) => (
+                        <TableOfContentsPageItem
+                            key={page.id}
+                            item={page}
+                            pagesToExpand={pagesToExpand}
+                            selectedId={selectedId}
                             getChildrenPages={getChildrenPages}
                             getChildrenAnchors={getChildrenAnchors}
+                            onClick={(event, page) => {
+                                const {id} = page;
+                                setSelectedId(id);
+                                onPageSelect(event, page);
+                            }}
                         />
                     ))}
                 </ul>

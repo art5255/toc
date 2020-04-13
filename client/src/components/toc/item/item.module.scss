@@ -1,7 +1,6 @@
 .tocItem {
   display: flex;
   padding: 8px 32px;
-  width: 216px;
   color: rgba(39, 40, 44, 0.70);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Droid Sans', 'Helvetica Neue', Arial, sans-serif;
   font-size: 12px;
@@ -10,10 +9,30 @@
   overflow: hidden;
   text-decoration: none;
   text-overflow: ellipsis;
+  transition: background 0.2s;
+  animation: appear 0.3s;
+
+  &:hover {
+    background: #F4F4F4;
+  }
+}
+
+@keyframes appear {
+  0% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .tocItemSelected {
   font-weight: bold;
+}
+
+.tocItem.tocItemDisabled {
+  pointer-events: none;
+  color: #ccc;
 }
 
 .tocExpander {
@@ -21,7 +40,7 @@
   height: 14px;
   margin-left: -18px;
   vertical-align: middle;
-  transition: transform .2s;
+  transition: transform 0.2s;
   fill: #3C3D40;
   cursor: pointer;
 }
@@ -33,4 +52,8 @@
 
 .tocExpanderSelected {
   font-weight: bold;
+}
+
+.tocExpanderDisabled {
+  fill: #ccc;
 }

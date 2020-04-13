@@ -32,6 +32,13 @@ const TableOfContentsContainer = () => {
             isLoading={isLoading}
             entities={entities}
             topLevelIds={topLevelIds}
+            onPageSelect={(event, {
+                title,
+                url,
+            }) => {
+                event.preventDefault();
+                window.history.pushState({}, title, url);
+            }}
         />
     );
 };

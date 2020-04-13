@@ -9,6 +9,7 @@
     "paths": {
       "@components/*": ["./src/components/*"],
       "@api/*": ["./src/api/*"],
+      "@helpers/*": ["./src/helpers/*"],
       "@interfaces/*": ["./src/interfaces/*"]
     },
     "lib": ["dom", "es5", "es6", "es7", "esnext"],

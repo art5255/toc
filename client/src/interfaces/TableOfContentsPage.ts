@@ -7,4 +7,5 @@ export default interface TableOfContentsPage {
     pages: string[];
     anchors: string[];
     tabIndex: number;
+    parentId?: string;
 }
