@@ -1,3 +1,4 @@
+import styles from "../item.module.scss";
 import React, {FunctionComponent} from "react";
 import TableOfContentsItem from "@components/toc/item/TableOfContentsItem";
 import TableOfContentsAnchor from "@interfaces/TableOfContentsAnchor";
@@ -18,6 +19,7 @@ const TableOfContentsAnchorItem: FunctionComponent<TableOfContentsAnchorProps> =
     selectedId,
 }) => (
     <TableOfContentsItem
+        className={styles.tocItemAnchor}
         item={item}
         selectedId={selectedId}
         disabled={disabled}

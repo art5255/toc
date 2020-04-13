@@ -3,9 +3,10 @@ import HtmlPlugin from "html-webpack-plugin";
 import HappyPack from "happypack";
 import {TsconfigPathsPlugin} from "tsconfig-paths-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import LodashModuleReplacementPlugin from "lodash-webpack-plugin";
 import {HotModuleReplacementPlugin, EnvironmentPlugin} from "webpack";
 import autoprefixer from "autoprefixer";
-import pickBy from "lodash/pickBy";
+import {pickBy} from "lodash";
 import Sass from "sass";
 
 const isDev = (mode) => mode === "development";
@@ -25,7 +26,7 @@ function getSCSSPlugins(mode, useModules) {
         {
             loader: "postcss-loader",
             options: {
-                ident: 'postcss',
+                ident: "postcss",
                 sourceMap: isDev(mode),
                 plugins() {
                     return [
@@ -49,6 +50,9 @@ function getSCSSPlugins(mode, useModules) {
     ];
 }
 
+const CLIENT_HOST = "localhost";
+const CLIENT_PORT = 9000;
+
 export default (env, { mode }) => {
     const config = {
         path: `${__dirname}/public`,
@@ -62,25 +66,26 @@ export default (env, { mode }) => {
                 "css/[name].css" :
                 "css/[name].[chunkhash].css",
             allChunks: true,
-            publicPath: 'css',
+            publicPath: "css",
         },
     };
     return {
         devtool: isDev(mode) && "inline-source-map",
         entry: pickBy({
             "react-hot-loader/patch": isDev(mode) && "react-hot-loader/patch",
-            "webpack-dev-server/client?http://localhost:9000": isDev(mode) && "webpack-dev-server/client?http://localhost:9000",
+            [`webpack-dev-server/client?http://${CLIENT_HOST}:${CLIENT_PORT}`]:
+                isDev(mode) && `webpack-dev-server/client?http://${CLIENT_HOST}:${CLIENT_PORT}`,
             "webpack/hot/only-dev-server": isDev(mode) && "webpack/hot/only-dev-server",
             bundle: "./src/index.tsx",
         }),
         output: {
             path: config.path,
-            publicPath: '/',
-            filename: 'js/[name].[hash].js',
-            chunkFilename: 'js/[name].[id].bundle.[chunkhash].js',
+            publicPath: "/",
+            filename: "js/[name].[hash].js",
+            chunkFilename: "js/[name].[id].bundle.[chunkhash].js",
         },
         resolve: {
-            extensions: ['.js', '.json', '.jsx', '.ts', '.tsx'],
+            extensions: [".js", ".json", ".jsx", ".ts", ".tsx"],
             plugins: [
                 new TsconfigPathsPlugin(),
             ],
@@ -102,10 +107,14 @@ export default (env, { mode }) => {
                     use: getSCSSPlugins(mode, false),
                 },
                 {
-                    test: /.*\.(ttf|eot|svg|woff|woff2|png|ico|jpg|jpeg|gif)$/i,
+                    test: /\.svg$/,
+                    loader: "svg-inline-loader",
+                },
+                {
+                    test: /.*\.(ttf|eot|woff|woff2|png|ico|jpg|jpeg|gif)$/i,
                     use: [
                         {
-                            loader: 'file-loader',
+                            loader: "file-loader",
                             options: {
                                 name: isDev(mode) ?
                                     "[path][name].[ext]" :
@@ -119,6 +128,7 @@ export default (env, { mode }) => {
             ],
         },
         plugins: [
+            new LodashModuleReplacementPlugin,
             new CleanWebpackPlugin(),
             new HotModuleReplacementPlugin(),
             new HtmlPlugin(config.html),
@@ -127,29 +137,33 @@ export default (env, { mode }) => {
                 NODE_ENV: mode,
             }),
             new HappyPack({
-                id: 'ts',
+                id: "ts",
                 threads: 4,
                 loaders: [
                     {
                         path: "babel-loader",
-                        exclude: [/node_modules/]
+                        exclude: [/node_modules/],
+                        options: {
+                            'plugins': ['lodash'],
+                            'presets': [['env', { 'modules': false, 'targets': { 'node': 6 } }]]
+                        },
                     },
                 ]
             }),
         ],
         devServer: {
-            port: 9000,
-            host: '0.0.0.0',
-            contentBase: './public',
+            port: CLIENT_PORT,
+            host: CLIENT_HOST,
+            contentBase: "./public",
             hot: true,
             historyApiFallback: true,
             proxy: {
-                '/api/**': {
-                    target: 'http://localhost:9200',
+                "/api/**": {
+                    target: "http://localhost:9200",
                     secure: false,
                 },
-                '/**/*': {
-                    target: 'http://localhost:9000/',
+                "/**/*": {
+                    target: `http://${CLIENT_HOST}:${CLIENT_PORT}/`,
                     secure: false,
                     bypass({
                        headers: {
@@ -157,16 +171,16 @@ export default (env, { mode }) => {
                        },
                     }) {
                         if (accept) {
-                            const isHtml = accept.indexOf('html') !== -1;
-                            const isImage = accept.indexOf('image') !== -1;
+                            const isHtml = accept.indexOf("html") !== -1;
+                            const isImage = accept.indexOf("image") !== -1;
                             if (isHtml || isImage) {
-                                return 'http://localhost:9000/';
+                                return `http://${CLIENT_HOST}:${CLIENT_PORT}/`;
                             }
                         }
                     },
                 },
             },
-            publicPath: '/',
+            publicPath: "/",
         },
     };
 }

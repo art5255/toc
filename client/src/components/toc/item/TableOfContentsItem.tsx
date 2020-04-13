@@ -5,6 +5,7 @@ import TableOfContentsPage from "@interfaces/TableOfContentsPage";
 import TableOfContentsAnchor from "@interfaces/TableOfContentsAnchor";
 
 export interface TableOfContentItemProps {
+    className?: string;
     item: TableOfContentsPage | TableOfContentsAnchor;
     selectedId: string;
     href: string;
@@ -23,6 +24,7 @@ const TableOfContentsItem: FunctionComponent<TableOfContentItemProps> = ({
         title = "",
         level,
     } = {},
+    className = "",
     children,
     onClick = () => {},
 }) => {
@@ -30,6 +32,10 @@ const TableOfContentsItem: FunctionComponent<TableOfContentItemProps> = ({
 
     return (
         <li
+            className={cn({
+                [styles.tocItemWrapper]: true,
+                [className]: true,
+            })}
             style={{
                 paddingLeft: level * LEVEL_PADDING,
             }}
@@ -50,4 +56,4 @@ const TableOfContentsItem: FunctionComponent<TableOfContentItemProps> = ({
     );
 };
 
-export default TableOfContentsItem;
+export default React.memo<typeof TableOfContentsItem>(TableOfContentsItem);

@@ -10,7 +10,8 @@ module.exports = function (api) {
                         "last 4 Chrome versions",
                         "last 4 Firefox versions",
                         "last 4 Edge versions",
-                    ]
+                    ],
+                    "node": 6,
                 }
             }
         ],
@@ -32,7 +33,7 @@ module.exports = function (api) {
         "@babel/plugin-proposal-nullish-coalescing-operator",
         "@babel/plugin-proposal-do-expressions",
         "@babel/plugin-proposal-function-bind",
-        ["babel-plugin-styled-components", { "displayName": true }],
+        "lodash",
     ];
 
     return {

@@ -11,10 +11,24 @@
   text-overflow: ellipsis;
   transition: background 0.2s;
   animation: appear 0.3s;
+}
 
+.tocItemWrapper {
   &:hover {
     background: #F4F4F4;
   }
+}
+
+.tocItemAnchor {
+  background: #F4F4F4;
+
+  &:hover {
+    background: #E9E9E9;
+  }
+}
+
+.tocItem.tocItemAnchor:hover {
+  background: #E9E9E9;
 }
 
 @keyframes appear {

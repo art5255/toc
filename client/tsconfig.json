@@ -10,7 +10,8 @@
       "@components/*": ["./src/components/*"],
       "@api/*": ["./src/api/*"],
       "@helpers/*": ["./src/helpers/*"],
-      "@interfaces/*": ["./src/interfaces/*"]
+      "@interfaces/*": ["./src/interfaces/*"],
+      "@icons/*": ["./src/icons/*"]
     },
     "lib": ["dom", "es5", "es6", "es7", "esnext"],
     "jsx": "react",

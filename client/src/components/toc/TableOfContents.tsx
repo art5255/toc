@@ -58,6 +58,11 @@ const TableOfContents: FunctionComponent<TableOfContentsProps> = ({
 
     const getChildrenPages = useCallback((ids: string[]) => getByIds(ids, pages), [pages]);
     const getChildrenAnchors = useCallback((ids: string[]) => getByIds(ids, anchors), [anchors]);
+    const onPageClick = useCallback((event, page) => {
+        const {id} = page;
+        setSelectedId(id);
+        onPageSelect(event, page);
+    }, [onPageSelect, setSelectedId]);
 
     return (
         <nav className={styles.tocWrapper}>
@@ -76,11 +81,7 @@ const TableOfContents: FunctionComponent<TableOfContentsProps> = ({
                             selectedId={selectedId}
                             getChildrenPages={getChildrenPages}
                             getChildrenAnchors={getChildrenAnchors}
-                            onClick={(event, page) => {
-                                const {id} = page;
-                                setSelectedId(id);
-                                onPageSelect(event, page);
-                            }}
+                            onClick={onPageClick}
                         />
                     ))}
                 </ul>

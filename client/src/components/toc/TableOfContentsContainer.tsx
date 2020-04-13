@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {SyntheticEvent, useCallback, useEffect, useState} from "react";
 import getTOCItems from "@api/getTOCItems";
 import {CANCEL} from "@api/callApi";
 import TableOfContents from "@components/toc/TableOfContents";
 import TableOfContentsResponse from "@interfaces/TableOfContentsResponse";
+import TableOfContentsPage from "@interfaces/TableOfContentsPage";
 
 const TableOfContentsContainer = () => {
     const [response, setResponse] = useState<TableOfContentsResponse>();
@@ -27,18 +28,20 @@ const TableOfContentsContainer = () => {
         topLevelIds,
     } = response || {};
 
+    const onPageSelect = useCallback((event: SyntheticEvent, {
+        title,
+        url,
+    }: TableOfContentsPage) => {
+        event.preventDefault();
+        window.history.pushState({}, title, url);
+    }, []);
+
     return (
         <TableOfContents
             isLoading={isLoading}
             entities={entities}
             topLevelIds={topLevelIds}
-            onPageSelect={(event, {
-                title,
-                url,
-            }) => {
-                event.preventDefault();
-                window.history.pushState({}, title, url);
-            }}
+            onPageSelect={onPageSelect}
         />
     );
 };

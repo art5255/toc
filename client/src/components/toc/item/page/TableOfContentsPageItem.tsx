@@ -1,10 +1,12 @@
 import styles from "../item.module.scss";
-import React, {FunctionComponent, Fragment, useState, useEffect, SyntheticEvent} from "react";
+import expander from "@icons/expander.svg";
+import React, {FunctionComponent, Fragment, useState, useEffect, SyntheticEvent, useCallback, useMemo} from "react";
 import cn from "classnames";
 import TableOfContentsPage from "@interfaces/TableOfContentsPage";
 import TableOfContentsAnchor from "@interfaces/TableOfContentsAnchor";
 import TableOfContentsItem from "@components/toc/item/TableOfContentsItem";
 import TableOfContentsAnchorItem from "@components/toc/item/anchor/TableOfContentsAnchorItem";
+import Icon from "@components/icon/Icon";
 
 export interface TableOfContentsPageProps {
     item: TableOfContentsPage;
@@ -58,36 +60,44 @@ const TableOfContentsPageItem: FunctionComponent<TableOfContentsPageProps> = ({
         }
     }, [selected]);
 
+    const onItemClick = useCallback((event: SyntheticEvent) => {
+        onClick(event, item);
+        onExpand(true);
+    }, [onClick, onExpand, item]);
+
+    const onExpanderClick = useCallback((event: SyntheticEvent) => {
+        event.nativeEvent.preventDefault();
+        event.stopPropagation();
+
+        onExpand(!expanded);
+    }, [onExpand, expanded]);
+
+    const TableOfContentsExpander = useMemo(() => (
+        <Icon
+            html={expander}
+            className={cn({
+                [styles.tocExpander]: true,
+                [styles.tocExpanderOpened]: expanded,
+                [styles.tocExpanderSelected]: selected,
+                [styles.tocExpanderDisabled]: disabled,
+            })}
+            onClick={onExpanderClick}
+        />
+    ), [expanded, selected, disabled, onExpanderClick]);
+
     return (
         <Fragment>
             <TableOfContentsItem
+                className={cn({
+                    [styles.tocItemAnchor]: selected && anchors.length > 0,
+                })}
                 selectedId={selectedId}
                 href={url}
                 item={item}
                 disabled={disabled}
-                onClick={(event) => {
-                    onClick(event, item);
-                    onExpand(true);
-                }}
+                onClick={onItemClick}
             >
-                {pages.length > 0 &&
-                <svg
-                    viewBox="-5 -3 24 24"
-                    className={cn({
-                        [styles.tocExpander]: true,
-                        [styles.tocExpanderOpened]: expanded,
-                        [styles.tocExpanderSelected]: selected,
-                        [styles.tocExpanderDisabled]: disabled,
-                    })}
-                    onClick={(event) => {
-                        event.nativeEvent.preventDefault();
-                        event.stopPropagation();
-
-                        onExpand(!expanded);
-                    }}
-                >
-                    <path d="M11 9l-6 5.25V3.75z"/>
-                </svg>}
+                {pages.length > 0 && TableOfContentsExpander}
             </TableOfContentsItem>
             {selected && childrenAnchors.map((anchor) => (
                 <TableOfContentsAnchorItem
